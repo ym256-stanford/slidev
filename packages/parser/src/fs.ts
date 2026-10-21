@@ -86,6 +86,12 @@ export async function load(
   const watchFiles: Record<string, Set<number>> = {}
   const slides: SlideInfo[] = []
 
+  function formatImportChain(importChain: SourceSlideInfo[] | undefined, slide: SourceSlideInfo, target: string) {
+    return [...(importChain ?? []).map(s => s.filepath), slide.filepath, target]
+      .map(path => slash(relative(options.userRoot, path)))
+      .join(' -> ')
+  }
+
   async function loadMarkdown(path: string, range?: string, frontmatterOverride?: Record<string, unknown>, importers?: SourceSlideInfo[]) {
     let md = markdownFiles[path]
     if (!md) {
@@ -148,7 +154,7 @@ export async function load(
         md.errors ??= []
         md.errors.push({
           row: slide.start,
-          message: `Circular import detected for "${slide.frontmatter.src}" (${path})`,
+          message: `Circular import detected for "${slide.frontmatter.src}" (${path}). Import chain: ${formatImportChain(importChain, slide, path)}`,
         })
         return
       }
@@ -164,7 +170,7 @@ export async function load(
         md.errors ??= []
         md.errors.push({
           row: slide.start,
-          message: `Imported markdown file not found: ${path}`,
+          message: `Imported markdown file not found: ${path}. Import chain: ${formatImportChain(importChain, slide, path)}`,
         })
       }
       else {

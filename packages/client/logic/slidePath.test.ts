@@ -26,4 +26,8 @@ describe('getSlideRoutePath', () => {
     expect(getSlideRoutePath(route(2, 'intro'), false)).toBe('/intro')
     expect(getSlideRoutePath(route(2, 'intro'), true)).toBe('/presenter/intro')
   })
+
+  it('uses route aliases for export paths', () => {
+    expect(getSlideRoutePath(route(2, 'intro'), false, true)).toBe('/export/intro')
+  })
 })

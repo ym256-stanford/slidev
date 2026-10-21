@@ -616,6 +616,24 @@ Some content
     expect(errors.some(e => /circular/i.test(e.message))).toBe(true)
   })
 
+  it('reports the import chain for a nested missing file', async () => {
+    const root = resolve(__dirname, 'fixtures/markdown/import-chain/missing')
+    const data = await load({ userRoot: root, roots: [root] }, resolve(root, 'entry.md'))
+    const errors = data.markdownFiles[resolve(root, 'chapter.md')].errors ?? []
+    expect(errors).toHaveLength(1)
+    expect(errors[0].message).toContain('Imported markdown file not found:')
+    expect(errors[0].message).toContain('Import chain: entry.md -> chapter.md -> pages/missing.md')
+  })
+
+  it('reports the import chain for a nested circular import', async () => {
+    const root = resolve(__dirname, 'fixtures/markdown/import-chain/circular')
+    const data = await load({ userRoot: root, roots: [root] }, resolve(root, 'entry.md'))
+    const errors = data.markdownFiles[resolve(root, 'nested/leaf.md')].errors ?? []
+    expect(errors).toHaveLength(1)
+    expect(errors[0].message).toContain('Circular import detected')
+    expect(errors[0].message).toContain('Import chain: entry.md -> chapter.md -> nested/leaf.md -> chapter.md')
+  })
+
   it('records an error when a src: import selects a slide below the first one', async () => {
     const root = resolve(__dirname, 'fixtures/markdown/out-of-range')
     const data = await load({ userRoot: root, roots: [root] }, resolve(root, 'entry.md'))

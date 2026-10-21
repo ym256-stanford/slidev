@@ -1,0 +1,3 @@
+---
+src: ./nested/leaf.md
+---

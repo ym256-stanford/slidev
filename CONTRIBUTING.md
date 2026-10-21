@@ -25,10 +25,10 @@ You can contribute through a development environment in your browser by clicking
 
 ## Setup (locally)
 
-This project uses [`pnpm`](https://pnpm.io/) to manage the dependencies, install it if you haven't via
+This project uses [`pnpm`](https://pnpm.io/) 12.4.2, pinned in the root `package.json`. Install that version if you don't have it:
 
 ```bash
-npm i -g pnpm
+npm i -g pnpm@12.4.2
 ```
 
 Clone this repo to your local machine and install the dependencies.
@@ -75,8 +75,8 @@ Run the full local gate:
 pnpm verify   # build → typecheck → lint → test
 ```
 
-Note: tests require a prior build, because workspace packages resolve to their
-built `dist/`. `pnpm verify` handles this ordering for you.
+To run `pnpm test` separately, run `pnpm build` first: workspace packages resolve
+to their built `dist/`. `pnpm verify` handles this ordering for you.
 
 ## Project Structure
 
